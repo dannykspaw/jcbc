@@ -20,41 +20,36 @@ prod_num = 1
 limit = 40
 y = 1
 subcat_block = '"subcategoriesBlock"'
-prodcat_block = '"productCategoryBlock"'
 price_id = '"price"'
 ornament_id = '"product_id"'
 name_id = '"add"'
 for y in range (y,10):
-    try:
-        year_link = driver.find_element_by_xpath("//*[@id={}]/div[2]/ul/li[{}]/div/div/a".format(subcat_block, y))
-        print(year_link.text)
-        year_link.click()
-        time.sleep(1)
-        x += 1
-        while prod_num < limit:
-            try:
-                print("Scraping products...")
-                ornament_link = driver.find_element_by_xpath("//*[@id={}]/div[4]/div/div/div[{}]/div/div[1]/a".format(prodcat_block, prod_num))
-                ornament_link.click()
-                print(driver.currenturl)
-                print("in")
-                ornament_name = driver.find_element_by_xpath("//*[@id={}]/div[1]/div[2]/h1".format(name_id))
-                ornament_price = driver.find_element_by_xpath("//*[@id={}]".format(price_id))
-                ornament_id = driver.find_element_by_xpath("//*[@id={}]".format(ornament_id))
-                print(ornament_id.text, ornament_name.text, ornament_price.text)
-                print(driver.currenturl)
-                driver.navigate().back()
-                print("Back at product page")
-                time.sleep(1)
-                prod_num += 1
-            except:
-                print("Done scraping ",prod_num-1,"ornaments")
-                prod_num = limit
-        print("going back to year page", prod_num)
-        print("")
-        driver.execute_script("window.history.go(-1)")
-    except:
-        # print("ERRORED OUT", x)
-        x += 1
-print("Exited page find loop")
+    print("Into year list number", y)
+    year_link = driver.find_element_by_xpath("//*[@id={}]/div[2]/ul/li[{}]/div/div/a".format(subcat_block, y))
+    print(year_link.text)
+    year_link.click()
+    prod_num = 1
+    while prod_num < limit:
+        try:
+            print("Into ornament")
+            prodcat_block = '"productCategoryBlock"'
+            ornament_link = driver.find_element_by_xpath("//*[@id={}]/div[4]/div/div/div[{}]/div/div[1]/a".format(prodcat_block, prod_num))
+            ornament_link.click()
+            current_page = driver.current_url
+            ornament_name = driver.find_element_by_xpath("//*[@id={}]/div[1]/div[2]/h1".format(name_id))
+            ornament_price = driver.find_element_by_xpath("//*[@id={}]".format(price_id))
+            ornament_id = driver.find_element_by_xpath("//*[@id={}]".format(ornament_id))
+            print("Found ornament properties")
+            print(ornament_id.text, ornament_name.text, ornament_price.text)
+            driver.back()
+            time.sleep(1)
+            prod_num += 1
+        except:
+            print("Left PDP")
+            prod_num=limit
+    driver.back()
+    time.sleep(1)
+    print("Back at year list")
+    print("")
+    prod_num = 1
 driver.quit()
