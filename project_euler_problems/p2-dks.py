@@ -1,9 +1,8 @@
-limit = 100
-starting = 0
+from math import sqrt
 
+phi_a = (1+sqrt(5))/2
+phi_b = (1-sqrt(5))/2
 
-for x in range(starting,limit):
-    x = x + x
-    for x in range(starting,limit):
-        x += x
-    print(x)
+x = 0
+
+phi_a**x-phi_b/sqrt(5)
