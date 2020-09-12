@@ -46,7 +46,7 @@ product_links = []
 product_prices = []
 product_codes = []
 
-for x in range(1973,1978):
+for x in range(1973,1976):
     driver.get(year_link_list[x])
     time.sleep(1)
     try:
@@ -54,7 +54,6 @@ for x in range(1973,1978):
         number_of_products = number_of_products.text[26:]
         #Working on viewing all products here.text
         print("NUMBER OF PRODUCTS: ", number_of_products)
-        time.sleep(1)
         product_name_list = driver.find_elements_by_class_name('name')
         for x in product_name_list:
             product_names.append(x.text)
@@ -63,35 +62,35 @@ for x in range(1973,1978):
             product_links.append(product_link)
             print(x.text, " : ", product_link)
         print(len(product_links))
-        for x in product_links:
-            driver.get(x)
-            price = "price_placeholder"
-            price = driver.find_element_by_id("price").text
-            product_prices.append(price)
-            code = "code_placeholder"
-            # code = driver.find_element_by_id("product_id").text
-            product_codes.append(code)
         # iter_products_num = int(number_of_products)
         # for product in iter_products_num:
         #     product_name = driver.find_elements_by_class_name("name")
     except:
         print("NUMBER OF PRODUCTS: 0")
 
-print(product_codes)
-print(len(product_codes))
-print(product_prices)
-print(len(product_prices))
-print(product_names)
-print(len(product_names))
-print(product_links)
-print(len(product_links))
+for x in product_links:
+    driver.get(x)
+    price = driver.find_element_by_id("price").text
+    product_prices.append(price)
+    code = driver.find_element_by_id("product_id").text
+    product_codes.append(code)
+    print("Appended code and price for ",x)
 
-# ornament_db = pd.DataFrame()
-# ornament_db.insert(0,"Product Name",product_names)
-# ornament_db.insert(1,"Product Code",product_codes)
-# ornament_db.insert(2,"Product Prices",product_prices)
-# ornament_db.insert(3,"Product Link",product_links)
-# ornament_db.head()
+# print(product_codes)
+# print(len(product_codes))
+# print(product_prices)
+# print(len(product_prices))
+# print(product_names)
+# print(len(product_names))
+# print(product_links)
+# print(len(product_links))
+
+ornament_db = pd.DataFrame()
+ornament_db.insert(1,"Product Code",product_codes)
+ornament_db.insert(0,"Product Name",product_names)
+ornament_db.insert(2,"Product Price",product_prices)
+ornament_db.insert(3,"Product Link",product_links)
+print(ornament_db.head()))
 
 print("DONE")
 driver.quit()
