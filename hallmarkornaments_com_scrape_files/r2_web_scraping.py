@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 import time
 from csv import reader
-from joblib import Parallel, delayed
-import multiprocessing
 
 
 # Establish webdriver path
@@ -86,7 +84,7 @@ product_data_links =[]
 # product_link_df.to_csv(path_or_buf="product_links.csv", index=False)
 
 # open file in read mode
-with open('hallmark_ornaments_21.csv', 'r') as read_obj:
+with open('/Users/danielkearney-spaw/Desktop/jcbc/hallmarkornaments_com_link_files/hallmark_ornaments_21.csv', 'r') as read_obj:
     # pass the file object to reader() to get the reader object
     csv_reader = reader(read_obj)
     # Iterate over each row in the csv using reader object
@@ -129,7 +127,7 @@ ornament_df.insert(2,"Product Price",product_prices)
 ornament_df.insert(3,"Product Brand", product_brand)
 ornament_df.insert(4,"Product Availability", product_availability)
 ornament_df.insert(5,"Product Link",product_data_links)
-ornament_df.to_csv(path_or_buf="hallmark_ornaments_21_prod_info.csv", index=False)
+ornament_df.to_csv(path_or_buf="/Users/danielkearney-spaw/Desktop/jcbc/hallmarkornaments_com_prod_info/hallmark_ornaments_21_prod_info.csv", index=False)
 
 print("DONE")
 driver.quit()
