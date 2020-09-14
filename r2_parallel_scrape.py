@@ -84,6 +84,22 @@ product_link_df = pd.DataFrame()
 product_link_df.insert(0,"Links",product_links)
 product_link_df.to_csv(path_or_buf="product_links.csv", index=False)
 
+ornament_df = pd.DataFrame(columns=["Code","Name","Price","Brand","Availability","Link"])
+
+
+def processInput(row, driver):
+    print(row)
+    product_url = row[0]
+    driver.get(product_url)
+    name = driver.find_element_by_class_name("page_headers")
+    price = driver.find_element_by_id("price").text
+    code = driver.find_element_by_id("product_id").text
+    availability_list = driver.find_elements_by_id("availability")
+    brand = availability_list[0].text
+    availability = availability_list[1].text
+    product_detail_dict = {"Code":code,"Name":name,"Price":price,"Brand":brand,"Availability":availability,"Link":product_url}
+    return product_detail_dict
+
 # open file in read mode
 with open('product_links.csv', 'r') as read_obj:
     # pass the file object to reader() to get the reader object
@@ -92,32 +108,11 @@ with open('product_links.csv', 'r') as read_obj:
     header = next(csv_reader)
     # Check file as empty
     if header != None:
-        for row in csv_reader:
+        num_cores = multiprocessing.cpu_count()
+        results = Parallel(n_jobs=num_cores)(delayed(processInput)(row, driver) for row in csv_reader)
+        final_df = pd.DataFrame(results)
+        print(final_df.head(2))
             # row variable is a list that represents a row in csv
-            print(row)
-            product_url = row[0]
-            driver.get(product_url)
-            price = driver.find_element_by_id("price").text
-            product_prices.append(price)
-            code = driver.find_element_by_id("product_id").text
-            product_codes.append(code)
-            # print("Appended code and price for ",x)
-            availability_list = driver.find_elements_by_id("availability")
-            brand = availability_list[0].text
-            product_brand.append(brand)
-            availability = availability_list[1].text
-            product_availability.append(availability)
-
-ornament_df = pd.DataFrame()
-ornament_df.insert(0,"Product Code",product_codes)
-ornament_df.insert(1,"Product Name",product_names)
-ornament_df.insert(2,"Product Price",product_prices)
-ornament_df.insert(3,"Product Brand", product_brand)
-ornament_df.insert(4,"Product Availability", product_availability)
-ornament_df.insert(5,"Product Link",product_links)
-print(ornament_df.head(12))
-#
-# ornament_df.to_csv(path_or_buf="hallmark_ornaments_v2.csv", index=False)
 
 print("DONE")
 driver.quit()

@@ -51,41 +51,42 @@ product_prices = []
 product_codes = []
 product_availability = []
 product_brand = []
+product_data_links =[]
+#
+# for x in range(1973, 2020):
+#     driver.get(year_link_list[x])
+#     time.sleep(1)
+#     try:
+#         view_all_link = driver.find_element_by_class_name("category-viewall")
+#         view_all_link.click()
+#     except:
+#         print("No view all")
+#
+#     try:
+#         number_of_products = driver.find_element_by_class_name('product-count')
+#         number_of_products = number_of_products.text[26:]
+#         #Working on viewing all products here.text
+#         print("NUMBER OF PRODUCTS: ", number_of_products)
+#         product_name_list = driver.find_elements_by_class_name('name')
+#         for x in product_name_list:
+#             product_names.append(x.text)
+#             product_link_location = driver.find_element_by_partial_link_text(x.text)
+#             product_link = product_link_location.get_attribute("href")
+#             product_links.append(product_link)
+#             # print(x.text, " : ", product_link)
+#         print("product links", len(product_links))
+#         # iter_products_num = int(number_of_products)
+#         # for product in iter_products_num:
+#         #     product_name = driver.find_elements_by_class_name("name")
+#     except:
+#         print("NUMBER OF PRODUCTS: 0")
 
-for x in range(1973, 1978):
-    driver.get(year_link_list[x])
-    time.sleep(1)
-    try:
-        view_all_link = driver.find_element_by_class_name("category-viewall")
-        view_all_link.click()
-    except:
-        print("No view all")
-
-    try:
-        number_of_products = driver.find_element_by_class_name('product-count')
-        number_of_products = number_of_products.text[26:]
-        #Working on viewing all products here.text
-        print("NUMBER OF PRODUCTS: ", number_of_products)
-        product_name_list = driver.find_elements_by_class_name('name')
-        for x in product_name_list:
-            product_names.append(x.text)
-            product_link_location = driver.find_element_by_partial_link_text(x.text)
-            product_link = product_link_location.get_attribute("href")
-            product_links.append(product_link)
-            print(x.text, " : ", product_link)
-        print("product links", len(product_links))
-        # iter_products_num = int(number_of_products)
-        # for product in iter_products_num:
-        #     product_name = driver.find_elements_by_class_name("name")
-    except:
-        print("NUMBER OF PRODUCTS: 0")
-
-product_link_df = pd.DataFrame()
-product_link_df.insert(0,"Links",product_links)
-product_link_df.to_csv(path_or_buf="product_links.csv", index=False)
+# product_link_df = pd.DataFrame()
+# product_link_df.insert(0,"Links",product_links)
+# product_link_df.to_csv(path_or_buf="product_links.csv", index=False)
 
 # open file in read mode
-with open('product_links.csv', 'r') as read_obj:
+with open('hallmark_ornaments_21.csv', 'r') as read_obj:
     # pass the file object to reader() to get the reader object
     csv_reader = reader(read_obj)
     # Iterate over each row in the csv using reader object
@@ -96,17 +97,30 @@ with open('product_links.csv', 'r') as read_obj:
             # row variable is a list that represents a row in csv
             print(row)
             product_url = row[0]
+            product_data_links.append(product_url)
             driver.get(product_url)
-            price = driver.find_element_by_id("price").text
-            product_prices.append(price)
-            code = driver.find_element_by_id("product_id").text
-            product_codes.append(code)
-            # print("Appended code and price for ",x)
-            availability_list = driver.find_elements_by_id("availability")
-            brand = availability_list[0].text
-            product_brand.append(brand)
-            availability = availability_list[1].text
-            product_availability.append(availability)
+            try:
+                price = driver.find_element_by_id("price").text
+                product_prices.append(price)
+                code = driver.find_element_by_id("product_id").text
+                product_codes.append(code)
+                # print("Appended code and price for ",x)
+                availability_list = driver.find_elements_by_id("availability")
+                brand = availability_list[0].text
+                product_brand.append(brand)
+                availability = availability_list[1].text
+                product_availability.append(availability)
+                name = driver.find_element_by_class_name("page_headers")
+                product_names.append(name.text)
+            except:
+                price = "price error"
+                brand = "brand error"
+                code = "code error"
+                availability = "availbility error"
+                product_prices.append(price)
+                product_codes.append(code)
+                product_brand.append(brand)
+                product_availability.append(availability)
 
 ornament_df = pd.DataFrame()
 ornament_df.insert(0,"Product Code",product_codes)
@@ -114,10 +128,8 @@ ornament_df.insert(1,"Product Name",product_names)
 ornament_df.insert(2,"Product Price",product_prices)
 ornament_df.insert(3,"Product Brand", product_brand)
 ornament_df.insert(4,"Product Availability", product_availability)
-ornament_df.insert(5,"Product Link",product_links)
-print(ornament_df.head(12))
-#
-# ornament_df.to_csv(path_or_buf="hallmark_ornaments_v2.csv", index=False)
+ornament_df.insert(5,"Product Link",product_data_links)
+ornament_df.to_csv(path_or_buf="hallmark_ornaments_21_prod_info.csv", index=False)
 
 print("DONE")
 driver.quit()
